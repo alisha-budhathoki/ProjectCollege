@@ -99,7 +99,7 @@ public class NotificationFragment extends Fragment {
 
                             mList.add(notification);
                         }
-
+                        refresh.setRefreshing(false);
                         adapter.notifyDataSetChanged();
                         refresh.setRefreshing(false);
                     }

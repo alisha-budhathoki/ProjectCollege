@@ -23,8 +23,8 @@ public class Room implements Parcelable {
     public String date_added;
     public String updated_at;
     public String deleted_at;
-    public double longitutde;
-    public double lattitude;
+    public String longitutde;
+    public String lattitude;
     public int rating;
     public int viewCount;
     public String onlinePaymentType;
@@ -54,12 +54,46 @@ public class Room implements Parcelable {
         date_added = in.readString();
         updated_at = in.readString();
         deleted_at = in.readString();
-        longitutde = in.readDouble();
-        lattitude = in.readDouble();
+        longitutde = in.readString();
+        lattitude = in.readString();
         rating = in.readInt();
         viewCount = in.readInt();
         onlinePaymentType = in.readString();
         services = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(desc);
+        dest.writeString(location);
+        dest.writeString(image);
+        dest.writeString(category_name);
+        dest.writeLong(contact_no);
+        dest.writeString(price);
+        dest.writeString(perUnits);
+        dest.writeString(owner_name);
+        dest.writeString(owner_id);
+        dest.writeInt(no_of_rooms);
+        dest.writeByte((byte) (isFullFlat ? 1 : 0));
+        dest.writeString(ownerRules);
+        dest.writeString(district);
+        dest.writeString(exactLocation);
+        dest.writeString(date_added);
+        dest.writeString(updated_at);
+        dest.writeString(deleted_at);
+        dest.writeString(longitutde);
+        dest.writeString(lattitude);
+        dest.writeInt(rating);
+        dest.writeInt(viewCount);
+        dest.writeString(onlinePaymentType);
+        dest.writeString(services);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<Room> CREATOR = new Creator<Room>() {
@@ -226,19 +260,19 @@ public class Room implements Parcelable {
         this.deleted_at = deleted_at;
     }
 
-    public double getLongitutde() {
+    public String getLongitutde() {
         return longitutde;
     }
 
-    public void setLongitutde(double longitutde) {
+    public void setLongitutde(String longitutde) {
         this.longitutde = longitutde;
     }
 
-    public double getLattitude() {
+    public String getLattitude() {
         return lattitude;
     }
 
-    public void setLattitude(double lattitude) {
+    public void setLattitude(String lattitude) {
         this.lattitude = lattitude;
     }
 
@@ -272,39 +306,5 @@ public class Room implements Parcelable {
 
     public void setServices(String services) {
         this.services = services;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(id);
-        parcel.writeString(name);
-        parcel.writeString(desc);
-        parcel.writeString(location);
-        parcel.writeString(image);
-        parcel.writeString(category_name);
-        parcel.writeLong(contact_no);
-        parcel.writeString(price);
-        parcel.writeString(perUnits);
-        parcel.writeString(owner_name);
-        parcel.writeString(owner_id);
-        parcel.writeInt(no_of_rooms);
-        parcel.writeByte((byte) (isFullFlat ? 1 : 0));
-        parcel.writeString(ownerRules);
-        parcel.writeString(district);
-        parcel.writeString(exactLocation);
-        parcel.writeString(date_added);
-        parcel.writeString(updated_at);
-        parcel.writeString(deleted_at);
-        parcel.writeDouble(longitutde);
-        parcel.writeDouble(lattitude);
-        parcel.writeInt(rating);
-        parcel.writeInt(viewCount);
-        parcel.writeString(onlinePaymentType);
-        parcel.writeString(services);
     }
 }

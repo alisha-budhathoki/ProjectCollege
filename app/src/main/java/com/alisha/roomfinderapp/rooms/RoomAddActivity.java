@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
@@ -37,6 +38,11 @@ import com.alisha.roomfinderapp.utils.Permissions;
 import com.alisha.roomfinderapp.utils.SharedPreferenceHelper;
 import com.alisha.roomfinderapp.utils.UniversalImageLoader;
 import com.github.thunder413.datetimeutils.DateTimeUtils;
+import com.google.android.gms.internal.location.zzq;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -71,7 +77,7 @@ public class RoomAddActivity extends AppCompatActivity {
     private Button btn_save;
 
     private String s_name, s_desc, s_price, s_no_of_rooms, s_location, image_link, s_owner_name,
-            s_contact_no,s_room_services;
+            s_contact_no, s_room_services;
     private boolean valid;
 
     private FirebaseHelper mFirebaseHelper;
@@ -91,8 +97,12 @@ public class RoomAddActivity extends AppCompatActivity {
     private boolean isImageChanged = false;
     private LocationManager locationManager;
     private ArrayAdapter<CharSequence> roomTypeAdapter, payTypeAdapter;
-    private Spinner roomTypeSpinner,payment_type_spinner;
+    private Spinner roomTypeSpinner, payment_type_spinner;
     private EditText room_services;
+    private boolean requestingLocationUpdates;
+    private FusedLocationProviderClient fusedLocationClient;
+    private LocationCallback locationCallback;
+    private LocationRequest locationRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +115,20 @@ public class RoomAddActivity extends AppCompatActivity {
         initImageLoader();
         mFirebaseHelper = new FirebaseHelper(mContext);
 
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    // Update UI with location data
+                    // ...
+                }
+            }
+
+            ;
+        };
         setupProgressDialog();
         initData();
         Dexter.withActivity(this)
@@ -151,6 +175,15 @@ public class RoomAddActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
+    }
+
+    private void stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback);
+    }
 
     private void setupLocationService() {
 
@@ -190,13 +223,40 @@ public class RoomAddActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (requestingLocationUpdates) {
+            startLocationUpdates();
+        }
+    }
+
+    private void startLocationUpdates() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    Activity#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for Activity#requestPermissions for more details.
+                return;
+            }
+        }
+        fusedLocationClient.requestLocationUpdates(locationRequest,
+                locationCallback,
+                null /* Looper */);
+    }
+
     private void setupLocationFromLatLong(double longitude, double latitude) {
         Geocoder geocoder;
         List<Address> addresses;
         geocoder = new Geocoder(this, Locale.getDefault());
 
         try {
-            addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+            addresses = geocoder.getFromLocation(latitude, longitude, 1); //
+            Log.d(TAG, "setupLocationFromLatLong: "+addresses);// Here 1 represent max location result to returned, by documents it recommended 1 to 5
             String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
             String city = addresses.get(0).getLocality();
             String state = addresses.get(0).getAdminArea();
@@ -324,8 +384,8 @@ public class RoomAddActivity extends AppCompatActivity {
         post.setDate_added(date);
         post.setUpdated_at(date);
         post.setDeleted_at(null);
-        post.setLattitude((long) latitude);
-        post.setLongitutde((long) longitude);
+        post.setLattitude(String.valueOf(latitude));
+        post.setLongitutde(String.valueOf(longitude));
         post.setViewCount(0);
         post.setOnlinePaymentType((String) payment_type_spinner.getSelectedItem());
         post.setServices(s_room_services);

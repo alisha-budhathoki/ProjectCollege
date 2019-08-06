@@ -311,7 +311,7 @@ public class HotelDetailActivity extends AppCompatActivity {
         lin_directions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String uri = String.format(Locale.ENGLISH, "google.navigation:q=%f,%f", (double) post.getLattitude(), (double) post.getLongitutde());
+                String uri = String.format(Locale.ENGLISH, "google.navigation:q=%.8f,%.8f", Double.parseDouble( post.getLattitude()), Double.parseDouble(post.getLongitutde()));
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                 mContext.startActivity(intent);
             }

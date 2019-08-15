@@ -127,7 +127,7 @@ public class RoomFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerView);
         refresh = view.findViewById(R.id.refresh);
 
-        manager = new LinearLayoutManager(mContext, RecyclerView.VERTICAL, false);
+        manager = new LinearLayoutManager(mContext, RecyclerView.VERTICAL, true);
 
         recyclerView.setLayoutManager(manager);
 

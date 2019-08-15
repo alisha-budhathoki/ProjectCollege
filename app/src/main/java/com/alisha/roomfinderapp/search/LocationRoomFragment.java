@@ -76,6 +76,7 @@ public class LocationRoomFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long position) {
                 item = adapterView.getItemAtPosition((int) position).toString();
+                loadHousesData();
             }
 
             @Override
@@ -89,8 +90,6 @@ public class LocationRoomFragment extends Fragment {
         refresh.setRefreshing(true);
 
         mFirebaseHelper.getMyRef().child(FilePaths.ROOM)
-                .orderByChild("district")
-                .equalTo(item)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -98,9 +97,12 @@ public class LocationRoomFragment extends Fragment {
                         for (DataSnapshot ds :
                                 dataSnapshot.getChildren()) {
 
-                            Room post= ds.getValue(Room.class);
 
-                            mList.add(post);
+                            Room post= ds.getValue(Room.class);
+                            if (post.getDistrict().equals(item)){
+
+                                mList.add(post);
+                            }
                         }
                         adapter.notifyDataSetChanged();
                         refresh.setRefreshing(false);

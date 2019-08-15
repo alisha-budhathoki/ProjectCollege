@@ -13,6 +13,7 @@ import com.alisha.roomfinderapp.utils.SharedPreferenceHelper;
 import com.alisha.roomfinderapp.utils.UniversalImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class SplashActivity extends AppCompatActivity {
@@ -27,7 +28,7 @@ public class SplashActivity extends AppCompatActivity {
         sharedPreferenceHelper = SharedPreferenceHelper.getInstance(mContext);
         loadScreen();
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-
+        FirebaseMessaging.getInstance().subscribeToTopic("pushNotifications");
         initImageLoader();
     }
 

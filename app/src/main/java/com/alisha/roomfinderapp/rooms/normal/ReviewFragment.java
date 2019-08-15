@@ -118,8 +118,7 @@ public class ReviewFragment extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
 
 
-                mFirebaseHelper.getMyRef().child(FilePaths.USER_COMMENTS)
-                        .child(post_name)
+                mFirebaseHelper.getMyRef().child(FilePaths.USER_REVIEWS)
                         .child(commentUserMerge.getComment_id())
                         .removeValue(new DatabaseReference.CompletionListener() {
                             @Override

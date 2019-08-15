@@ -42,7 +42,6 @@ import com.esewa.android.sdk.payment.ESewaPaymentActivity;
 import com.github.thunder413.datetimeutils.DateTimeUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -76,7 +75,7 @@ public class RoomDetailActivity extends AppCompatActivity {
     private CircleImageView imageUser;
     private SmileRating smile_rating;
     private TextInputEditText inputReview;
-    private Button btn_send;
+    private Button btn_send, btn_review_send;
     private RecyclerView recyclerView;
     private float userRated = 0;
     private List<CommentRatingMerge> mCommentList;
@@ -95,6 +94,7 @@ public class RoomDetailActivity extends AppCompatActivity {
     };
     private ViewPager viewPager;
     private int page=0;
+    private TextView tv_reviews,tv_comments;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,10 +110,11 @@ public class RoomDetailActivity extends AppCompatActivity {
 
         setupToolbar();
 //        setupAdapter();
-        setupCommentsList();
+//        setupCommentsList();
 ////        tempData();
 //
         initSendComment();
+        initSendReview();
 
         setupPaymentSystem();
 
@@ -122,8 +123,9 @@ public class RoomDetailActivity extends AppCompatActivity {
     }
 
     private void setupViewPagerForCommentsOrReview() {
+        tv_reviews = findViewById(R.id.tv_reviews);
+        tv_comments = findViewById(R.id.tv_comments);
 
-        PostPagerAdapter adapter = new PostPagerAdapter(getSupportFragmentManager());
 
         CommentsFragment commentsFragment = new CommentsFragment();
         ReviewFragment reviewFragment = new ReviewFragment();
@@ -132,18 +134,23 @@ public class RoomDetailActivity extends AppCompatActivity {
         bundle.putString(getString(R.string.data_post_name), post.getName());
         commentsFragment.setArguments(bundle);
         reviewFragment.setArguments(bundle);
-        adapter.addFragment(reviewFragment); //index 0
-        adapter.addFragment(commentsFragment); //index 1
 
-        viewPager = (ViewPager) findViewById(R.id.htab_viewpager);
-        viewPager.setAdapter(adapter);
+        getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, reviewFragment).commit();
 
+        tv_reviews.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, reviewFragment).commit();
+            }
+        });
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.htab_tabs);
-        tabLayout.setupWithViewPager(viewPager);
+        tv_comments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, commentsFragment).commit();
+            }
+        });
 
-        tabLayout.getTabAt(0).setText(POSTS[0]);
-        tabLayout.getTabAt(1).setText(POSTS[1]);
     }
 
     private void setupPaymentSystem() {
@@ -277,10 +284,18 @@ public class RoomDetailActivity extends AppCompatActivity {
 
         inputReview = findViewById(R.id.inputReview);
         btn_send = findViewById(R.id.btn_send);
+        btn_review_send = findViewById(R.id.btn_send_review);
 
         recyclerView = findViewById(R.id.recyclerView);
 
         mButton_book=findViewById(R.id.btn_room_book);
+
+        smile_rating.setOnRatingSelectedListener(new SmileRating.OnRatingSelectedListener() {
+            @Override
+            public void onRatingSelected(int level, boolean reselected) {
+                userRated = level;
+            }
+        });
 
     }
 
@@ -460,7 +475,6 @@ public class RoomDetailActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                                 Toast.makeText(mContext, "Comment added", Toast.LENGTH_SHORT).show();
-                                adapter.notifyDataSetChanged();
 
                                 sendNotificationToOwner(textComment);
                             }
@@ -473,6 +487,53 @@ public class RoomDetailActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    private void initSendReview() {
+
+        btn_review_send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final String textComment = inputReview.getText().toString();
+
+                inputReview.setText("");
+
+                final String keyId;
+
+
+                keyId = mFirebaseHelper.getMyRef()
+                        .child(FilePaths.USER_REVIEWS)
+                        .push().getKey();
+                final ReviewRatingMerge comment = new ReviewRatingMerge(
+                        keyId,
+                        post.getId(),
+                        textComment,
+                        mFirebaseHelper.getAuth().getCurrentUser().getUid(),
+                        sharedPreferenceHelper.getUserInfo().getUsername(),
+                        sharedPreferenceHelper.getUserInfo().getAvatar_img_link(),
+                        userRated
+                );
+                Toast.makeText(mContext, "sending your comment..", Toast.LENGTH_SHORT).show();
+                mFirebaseHelper.getMyRef().child(FilePaths.USER_REVIEWS)
+                        .child(keyId)
+                        .setValue(comment, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                Toast.makeText(mContext, "Comment added", Toast.LENGTH_SHORT).show();
+
+//                                sendNotificationToOwner(textComment);
+                            }
+                        });
+
+
+                inputReview.setText("");
+
+
+            }
+        });
+    }
+
 
     private void sendNotificationToOwner(String textComment) {
         Notification notification = new Notification();
@@ -502,19 +563,7 @@ public class RoomDetailActivity extends AppCompatActivity {
 
     }
 
-    private void setupCommentsList() {
 
-        mFirebaseHelper.getCommentRatingList(post.getId(), new CommentRatingListener() {
-            @Override
-            public void onLoaded(List<CommentRatingMerge> mComments) {
-                mCommentList.clear();
-                mCommentList.addAll(mComments);
-                adapter.notifyDataSetChanged();
-            }
-        });
-
-
-    }
     //payments module
 
 

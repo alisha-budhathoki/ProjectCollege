@@ -36,6 +36,10 @@
         <activity android:name=".startup.RegisterActivity" />
         <activity android:name=".startup.WelcomeActivityV2" />
         <activity android:name=".utils.ComplainActivity" />
+        <activity android:name=".utils.SettingActivity" />
+
+
+
         <!--
      Set custom default icon. This is used when no icon is set for incoming notification messages.
                  See README(https://goo.gl/l4GJaQ) for more.

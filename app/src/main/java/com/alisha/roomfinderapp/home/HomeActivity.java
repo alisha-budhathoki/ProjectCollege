@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.alisha.roomfinderapp.R;
+import com.alisha.roomfinderapp.admin.ComplaintsActivity;
 import com.alisha.roomfinderapp.models.UserFCM;
 import com.alisha.roomfinderapp.notifications.NotificationFragment;
 import com.alisha.roomfinderapp.rooms.RoomAddActivity;
@@ -20,6 +21,7 @@ import com.alisha.roomfinderapp.rooms.normal.RoomFragment;
 import com.alisha.roomfinderapp.search.SearchActivity;
 import com.alisha.roomfinderapp.utils.FilePaths;
 import com.alisha.roomfinderapp.utils.FirebaseHelper;
+import com.alisha.roomfinderapp.utils.SharedPreferenceHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -45,6 +47,22 @@ public class HomeActivity extends AppCompatActivity {
         ImageButton imageButton = findViewById(R.id.user_detail);
 
         final FirebaseHelper firebaseHelper = new FirebaseHelper(getApplicationContext());
+        SharedPreferenceHelper sharedPreferenceHelper= new SharedPreferenceHelper(getApplicationContext());
+
+
+        ImageButton admin_reports = findViewById(R.id.admin_reports);
+
+
+        if (sharedPreferenceHelper.getUserInfo().getUser_type() == 0){
+            admin_reports.setVisibility(View.VISIBLE);
+            admin_reports.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(new Intent(getApplicationContext(), ComplaintsActivity.class));
+                }
+            });
+        }
+
         bottomNav.setOnNavigationItemSelectedListener(navListner);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,7 +136,7 @@ public class HomeActivity extends AppCompatActivity {
                             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
                             break;
                         case R.id.nav_setting:
-//                            selectedFragment = new MoreFragment();
+                            selectedFragment = new MoreFragment();
                             break;
                     }
 

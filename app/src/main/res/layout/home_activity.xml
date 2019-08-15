@@ -44,23 +44,25 @@
         android:textColor="@color/colorsignupbackground"
         android:textSize="20dp" />
 
+
     <ImageButton
-        android:id="@+id/admin_reports"
-        android:layout_width="108dp"
+        android:id="@+id/user_detail"
+        android:layout_width="wrap_content"
         android:layout_height="69dp"
-        android:layout_marginLeft="124dp"
+        android:layout_alignParentEnd="true"
+        android:padding="12dp"
         android:layout_marginTop="5dp"
-        android:layout_toRightOf="@+id/room_rental_text"
         android:background="@color/colorloginbackground"
         app:srcCompat="@drawable/ic_action_man" />
 
     <ImageButton
-        android:id="@+id/user_detail"
-        android:layout_width="108dp"
+        android:id="@+id/admin_reports"
+        android:layout_width="wrap_content"
+        android:visibility="invisible"
         android:layout_height="69dp"
-        android:layout_marginLeft="124dp"
         android:layout_marginTop="5dp"
-        android:layout_toRightOf="@+id/room_rental_text"
+        android:layout_toLeftOf="@+id/user_detail"
         android:background="@color/colorloginbackground"
-        app:srcCompat="@drawable/ic_action_man" />
+        android:padding="12dp"
+        app:srcCompat="@drawable/ic_report_white" />
 </RelativeLayout>

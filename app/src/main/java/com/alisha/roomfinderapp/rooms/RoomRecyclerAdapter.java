@@ -2,7 +2,6 @@ package com.alisha.roomfinderapp.rooms;
 
 import android.content.Context;
 import android.content.Intent;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,7 +71,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RoomRecyclerAdapte
                         Intent intent = new Intent(mContext, RoomDetailActivity.class);
                         intent.putExtra(mContext.getString(R.string.calling_room_detail),
                                 mList.get(getAdapterPosition()));
-
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(intent);
                     }
                 }

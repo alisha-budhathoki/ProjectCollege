@@ -103,6 +103,8 @@ public class NotificationFragment extends Fragment {
                         adapter.notifyDataSetChanged();
                         refresh.setRefreshing(false);
                     }
+
+                    refresh.setRefreshing(false);
                 }
 
                 @Override

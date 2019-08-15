@@ -5,13 +5,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.alisha.roomfinderapp.R;
 import com.alisha.roomfinderapp.home.HomeActivity;
 import com.alisha.roomfinderapp.models.ReviewRatingMerge;
-import com.alisha.roomfinderapp.models.Room;
 import com.alisha.roomfinderapp.utils.AutomateData;
 import com.alisha.roomfinderapp.utils.CookieThumperSample;
 import com.alisha.roomfinderapp.utils.FilePaths;
@@ -19,9 +17,6 @@ import com.alisha.roomfinderapp.utils.FirebaseHelper;
 import com.github.thunder413.datetimeutils.DateTimeUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,7 +45,7 @@ public class WelcomeActivityV2 extends AppCompatActivity {
             @Override
             public void run() {
                 btn_continue.setClickable(true);
-                btn_continue.setText("Go >>");
+                btn_continue.setText("Go");
             }
         }, 5000);
 
@@ -136,25 +131,25 @@ public class WelcomeActivityV2 extends AppCompatActivity {
 //
 //        }
 
-
-        firebaseHelper.getMyRef().child(FilePaths.ROOM).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int i = 0;
-                for (DataSnapshot ds :
-                        dataSnapshot.getChildren()) {
-                    Room room = ds.getValue(Room.class);
-                    setupRoomReviews(room.getId(), i);
-
-                    i++;
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+//
+//        firebaseHelper.getMyRef().child(FilePaths.ROOM).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                int i = 0;
+//                for (DataSnapshot ds :
+//                        dataSnapshot.getChildren()) {
+//                    Room room = ds.getValue(Room.class);
+//                    setupRoomReviews(room.getId(), i);
+//
+//                    i++;
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
 
     }
 

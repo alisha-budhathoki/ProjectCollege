@@ -316,15 +316,17 @@ public class FirebaseHelper {
     }
     public void getReviewRatingMerge(String postId, final RoomDetailActivity.ReviewRatingListener commentRatingListener) {
         myRef.child(FilePaths.USER_REVIEWS)
-                .child(postId)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         List<ReviewRatingMerge> commentList = new ArrayList<>();
                         for (DataSnapshot ds :
                                 dataSnapshot.getChildren()) {
+
                             ReviewRatingMerge comment = ds.getValue(ReviewRatingMerge.class);
-                            commentList.add(comment);
+
+                            if (comment.getPost_id().equals(postId))
+                                commentList.add(comment);
                         }
 
                         commentRatingListener.onLoaded(commentList);

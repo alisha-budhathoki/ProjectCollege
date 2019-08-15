@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.alisha.roomfinderapp.R;
@@ -14,7 +13,6 @@ import com.alisha.roomfinderapp.utils.SharedPreferenceHelper;
 import com.alisha.roomfinderapp.utils.UniversalImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
-
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class SplashActivity extends AppCompatActivity {
@@ -44,7 +42,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                if (sharedPreferenceHelper.getIsFirstLaunch()) {
+                if (!sharedPreferenceHelper.getIsFirstLaunch()) {
                     sharedPreferenceHelper.setIsfirstlaunch(false);
                     Intent in = new Intent(mContext, WelcomeActivityV2.class);
                     in.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

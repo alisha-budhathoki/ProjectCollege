@@ -2,13 +2,13 @@ package com.alisha.roomfinderapp.rooms.normal;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
-
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,6 +19,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.alisha.roomfinderapp.R;
 import com.alisha.roomfinderapp.models.Room;
+import com.alisha.roomfinderapp.recommendations.RecommendationActivity;
 import com.alisha.roomfinderapp.rooms.RoomRecyclerAdapter;
 import com.alisha.roomfinderapp.utils.FilePaths;
 import com.alisha.roomfinderapp.utils.FirebaseHelper;
@@ -51,6 +52,13 @@ public class RoomFragment extends Fragment {
 
         mFirebaseHelper = new FirebaseHelper(mContext);
 
+        Button btn_recommendations = view.findViewById(R.id.btn_recommendations);
+        btn_recommendations.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getContext(), RecommendationActivity.class));
+            }
+        });
         setupAdapter();
         loadHousesData();
 
@@ -70,6 +78,34 @@ public class RoomFragment extends Fragment {
                                 dataSnapshot.getChildren()) {
 
                             Room post= ds.getValue(Room.class);
+//                            Map<String, Object> roomMap = (HashMap<String, Object>) ds.getValue();
+//                            Room post = new Room();
+//                            post.setId(roomMap.get("id").toString());//room id
+//                            post.setName(roomMap.get("name").toString());//room id
+//                            post.setDesc(roomMap.get("desc").toString());//room id
+//                            post.setLocation(roomMap.get("location").toString());//room id
+//                            post.setImage(roomMap.get("image").toString());//room id
+//                            post.setCategory_name(roomMap.get("category_name").toString());//room id
+//                            post.setContact_no(Long.parseLong(roomMap.get("contact_no").toString()));//room id
+//                            post.setPrice(roomMap.get("price").toString());//room id
+//                            post.setPerUnits(roomMap.get("perUnits").toString());//room id
+//                            post.setOwner_name(roomMap.get("owner_name").toString());//room id
+//                            post.setOwner_id(roomMap.get("owner_id").toString());//room id
+//                            post.setNo_of_rooms(Long.parseLong(roomMap.get("no_of_rooms").toString()));//room id
+//                            post.setFullFlat(Boolean.parseBoolean(roomMap.get("isFullFlat").toString()));//room id
+//                            post.setOwnerRules(roomMap.get("ownerRules").toString());//room id
+//                            post.setDistrict(roomMap.get("district").toString());//room id
+//                            post.setExactLocation(roomMap.get("exactLocation").toString());//room id
+//                            post.setDate_added(roomMap.get("date_added").toString());//room id
+//                            post.setUpdated_at(roomMap.get("updated_at").toString());//room id
+//                            post.setDeleted_at(roomMap.get("deleted_at").toString());//room id
+//                            post.setLongitutde(Long.parseLong(roomMap.get("longitutde").toString()));//room id
+//                            post.setLattitude(Long.parseLong(roomMap.get("lattitude").toString()));//room id
+//                            post.setRating(Integer.parseInt(roomMap.get("rating").toString()));//room id
+//                            post.setViewCount(Integer.parseInt(roomMap.get("viewCount").toString()));//room id
+//                            post.setOnlinePaymentType(roomMap.get("onlinePaymentType").toString());//room id
+//                            post.setServices(roomMap.get("services").toString());//room id
+//
 
                             mList.add(post);
                         }

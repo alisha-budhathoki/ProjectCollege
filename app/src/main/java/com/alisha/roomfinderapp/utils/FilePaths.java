@@ -19,6 +19,7 @@ public class FilePaths {
     public static final String BOOKNOW = "hotelBookings";
     public static final String IMAGE_URI = "drawable://" + R.drawable.main;
     public static final String USER_COMMENTS = "user_comments";
+    public static final String USER_REVIEWS = "user_reviews";
     public static final String USER_COMPLAINTS = "user_complaints";
     public static final String NOTIFICATIONS = "notifications";
     public static final String USERS_FCM = "users_fcm";

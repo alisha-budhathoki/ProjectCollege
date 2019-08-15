@@ -12,6 +12,10 @@ android {
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
     }
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -80,5 +84,17 @@ dependencies {
 
     implementation 'com.beardedhen:androidbootstrap:2.3.2'
     implementation 'com.google.firebase:firebase-messaging:19.0.1'
+
+    compileOnly 'org.projectlombok:lombok:1.18.8'
+    annotationProcessor 'org.projectlombok:lombok:1.18.8'
+
+
+    //placesd
+    implementation 'com.google.android.libraries.places:places:1.0.0'
+
+    implementation(name: 'eSewaSdk', ext: 'aar')
+    implementation('com.khalti:khalti-android:1.2.8') {
+        transitive = true
+    }
 }
 apply plugin: 'com.google.gms.google-services'

@@ -101,7 +101,7 @@ public class HomeActivity extends AppCompatActivity {
                             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
                             break;
                         case R.id.nav_search_button:
-                            bottomNav.setSelectedItemId(R.id.nav_home);
+//                            bottomNav.setSelectedItemId(R.id.nav_home);
 //                            selectedFragment = new PopularRoomFragment();
                             Intent searchIn = new Intent(getApplicationContext(), SearchActivity.class);
                             startActivity(searchIn);

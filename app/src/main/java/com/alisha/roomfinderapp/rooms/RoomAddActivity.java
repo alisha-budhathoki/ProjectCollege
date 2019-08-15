@@ -38,7 +38,6 @@ import com.alisha.roomfinderapp.utils.Permissions;
 import com.alisha.roomfinderapp.utils.SharedPreferenceHelper;
 import com.alisha.roomfinderapp.utils.UniversalImageLoader;
 import com.github.thunder413.datetimeutils.DateTimeUtils;
-import com.google.android.gms.internal.location.zzq;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -88,7 +87,7 @@ public class RoomAddActivity extends AppCompatActivity {
     private Spinner districtsSpinner;
 
     private String exactLocation;
-    private double longitude, latitude;
+    private long longitude, latitude;
 
     private Room post;
     private ArrayAdapter<CharSequence> districtsAdapter;
@@ -178,7 +177,8 @@ public class RoomAddActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        stopLocationUpdates();
+        if (fusedLocationClient != null)
+            stopLocationUpdates();
     }
 
     private void stopLocationUpdates() {
@@ -208,8 +208,8 @@ public class RoomAddActivity extends AppCompatActivity {
             double latitude = gps.getLatitude();
             double longitude = gps.getLongitude();
             setupLocationFromLatLong(longitude, latitude);
-            this.longitude = latitude;
-            this.latitude = longitude;
+            this.longitude = (long) latitude;
+            this.latitude = (long) longitude;
             // \n is for new line
             Toast.makeText(getApplicationContext(), "Your Location is - \nLat: "
                     + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
@@ -384,8 +384,8 @@ public class RoomAddActivity extends AppCompatActivity {
         post.setDate_added(date);
         post.setUpdated_at(date);
         post.setDeleted_at(null);
-        post.setLattitude(String.valueOf(latitude));
-        post.setLongitutde(String.valueOf(longitude));
+        post.setLattitude(latitude);
+        post.setLongitutde(longitude);
         post.setViewCount(0);
         post.setOnlinePaymentType((String) payment_type_spinner.getSelectedItem());
         post.setServices(s_room_services);

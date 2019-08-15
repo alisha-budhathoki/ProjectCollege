@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import com.alisha.roomfinderapp.R;
 import com.alisha.roomfinderapp.home.HomeActivity;
 import com.alisha.roomfinderapp.models.CommentRatingMerge;
+import com.alisha.roomfinderapp.models.ReviewRatingMerge;
 import com.alisha.roomfinderapp.models.Room;
 import com.alisha.roomfinderapp.models.User;
 import com.alisha.roomfinderapp.rooms.normal.RoomDetailActivity;
@@ -301,6 +302,28 @@ public class FirebaseHelper {
                         for (DataSnapshot ds :
                                 dataSnapshot.getChildren()) {
                             CommentRatingMerge comment = ds.getValue(CommentRatingMerge.class);
+                            commentList.add(comment);
+                        }
+
+                        commentRatingListener.onLoaded(commentList);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+    public void getReviewRatingMerge(String postId, final RoomDetailActivity.ReviewRatingListener commentRatingListener) {
+        myRef.child(FilePaths.USER_REVIEWS)
+                .child(postId)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        List<ReviewRatingMerge> commentList = new ArrayList<>();
+                        for (DataSnapshot ds :
+                                dataSnapshot.getChildren()) {
+                            ReviewRatingMerge comment = ds.getValue(ReviewRatingMerge.class);
                             commentList.add(comment);
                         }
 

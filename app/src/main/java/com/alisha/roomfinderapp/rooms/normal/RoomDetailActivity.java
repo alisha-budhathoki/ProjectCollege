@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,10 +22,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.alisha.roomfinderapp.R;
 import com.alisha.roomfinderapp.models.CommentRatingMerge;
 import com.alisha.roomfinderapp.models.Notification;
+import com.alisha.roomfinderapp.models.ReviewRatingMerge;
 import com.alisha.roomfinderapp.models.Room;
 import com.alisha.roomfinderapp.rooms.RoomAddActivity;
 import com.alisha.roomfinderapp.utils.CommentsRatingRecyclerAdapter;
@@ -33,20 +36,28 @@ import com.alisha.roomfinderapp.utils.FilePaths;
 import com.alisha.roomfinderapp.utils.FirebaseHelper;
 import com.alisha.roomfinderapp.utils.SharedPreferenceHelper;
 import com.alisha.roomfinderapp.utils.UniversalImageLoader;
+import com.esewa.android.sdk.payment.ESewaConfiguration;
+import com.esewa.android.sdk.payment.ESewaPayment;
+import com.esewa.android.sdk.payment.ESewaPaymentActivity;
 import com.github.thunder413.datetimeutils.DateTimeUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.hsalf.smilerating.SmileRating;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import khalti.checkOut.api.Config;
+import khalti.checkOut.api.OnCheckOutListener;
+import khalti.checkOut.helper.KhaltiCheckOut;
+import khalti.widget.KhaltiButton;
 
 
 public class RoomDetailActivity extends AppCompatActivity {
@@ -73,6 +84,18 @@ public class RoomDetailActivity extends AppCompatActivity {
     private CommentsRatingRecyclerAdapter adapter;
     private SharedPreferenceHelper sharedPreferenceHelper;
 
+    private Button mButton_book;
+
+    private ESewaConfiguration eSewaConfiguration;
+    private static final int REQUEST_CODE_PAYMENT=100;
+
+    public static final String[] POSTS = {
+            "Reviews",
+            "Comments"
+    };
+    private ViewPager viewPager;
+    private int page=0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,15 +103,120 @@ public class RoomDetailActivity extends AppCompatActivity {
 
         mFirebaseHelper = new FirebaseHelper(mContext);
         sharedPreferenceHelper = new SharedPreferenceHelper(mContext);
+
+
         setupWidgets();
         getIncomingIntent();
 
         setupToolbar();
-        setupAdapter();
+//        setupAdapter();
         setupCommentsList();
 ////        tempData();
 //
         initSendComment();
+
+        setupPaymentSystem();
+
+        setupViewPagerForCommentsOrReview();
+
+    }
+
+    private void setupViewPagerForCommentsOrReview() {
+
+        PostPagerAdapter adapter = new PostPagerAdapter(getSupportFragmentManager());
+
+        CommentsFragment commentsFragment = new CommentsFragment();
+        ReviewFragment reviewFragment = new ReviewFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(getString(R.string.data_post_id), post.getId());
+        bundle.putString(getString(R.string.data_post_name), post.getName());
+        commentsFragment.setArguments(bundle);
+        reviewFragment.setArguments(bundle);
+        adapter.addFragment(reviewFragment); //index 0
+        adapter.addFragment(commentsFragment); //index 1
+
+        viewPager = (ViewPager) findViewById(R.id.htab_viewpager);
+        viewPager.setAdapter(adapter);
+
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.htab_tabs);
+        tabLayout.setupWithViewPager(viewPager);
+
+        tabLayout.getTabAt(0).setText(POSTS[0]);
+        tabLayout.getTabAt(1).setText(POSTS[1]);
+    }
+
+    private void setupPaymentSystem() {
+        mButton_book.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//               ESewaPayment eSewaPayment = new ESewaPayment("20",
+//        "cycle", "102","https://roomrental13-36686.firebaseio.com/rest/saving-data/fireblog");
+//
+//               Intent intent = new Intent(RoomDetailActivity.this, ESewaPaymentActivity.class);
+//               intent.putExtra(ESewaConfiguration.ESEWA_CONFIGURATION, eSewaConfiguration);
+//
+//               intent.putExtra(ESewaPayment.ESEWA_PAYMENT, eSewaPayment);
+//               startActivityForResult(intent, REQUEST_CODE_PAYMENT);
+                LayoutInflater inflater = getLayoutInflater();
+                View alertLayout = inflater.inflate(R.layout.payment_layout, null);
+                KhaltiButton khaltiButton = alertLayout.findViewById(R.id.khalti_button);
+                Button esewa = alertLayout.findViewById(R.id.esewa_button);
+
+
+                final Config config = new Config("test_public_key_67697b5bb1194422a5c3c51c963b92ad", post.getId(), post.getName(), "", 1000L, new OnCheckOutListener() {
+
+                    @Override
+                    public void onSuccess(HashMap<String, Object> data) {
+                        Log.i("Payment confirmed", data + "");
+                        Log.i("RoomFinderApp", " data" + data.toString());
+                        Toast.makeText(RoomDetailActivity.this, "Payment Sucess", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onError(String action, String message) {
+                        Log.i("RoomFinderApp", action + " message: " + message);
+                        Toast.makeText(RoomDetailActivity.this, "Payment Failed Try Again!", Toast.LENGTH_LONG).show();
+                    }
+                });
+                //   khalti.setCheckOutConfig(config);
+
+                khaltiButton.setCheckOutConfig(config);
+                AlertDialog.Builder alert = new AlertDialog.Builder(RoomDetailActivity.this);
+                alert.setTitle("Payment with");
+                // this is set the view from XML inside AlertDialog
+                alert.setView(alertLayout);
+                khaltiButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        KhaltiCheckOut khaltiCheckOut = new KhaltiCheckOut(RoomDetailActivity.this, config);
+                        khaltiCheckOut.show();
+                    }
+                });
+
+
+                esewa.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        eSewaConfiguration = new ESewaConfiguration()
+                                .clientId("JB0BBQ4aD0UqIThFJwAKBgAXEUkEGQUBBAwdOgABHD4DChwUAB0R")
+                                .secretKey("BhwIWQQADhIYSxILExMcAgFXFhcOBwAKBgAXEQ==")
+                                .environment(ESewaConfiguration.ENVIRONMENT_TEST);
+                        ESewaPayment eSewaPayment = new ESewaPayment("20",
+                                "cycle", "025", "https://schema.getpostman.com/json/collection/v2.1.0/collection.json");
+
+                        Intent intent = new Intent(RoomDetailActivity.this, ESewaPaymentActivity.class);
+                        intent.putExtra(ESewaConfiguration.ESEWA_CONFIGURATION, eSewaConfiguration);
+
+                        intent.putExtra(ESewaPayment.ESEWA_PAYMENT, eSewaPayment);
+                        startActivityForResult(intent, REQUEST_CODE_PAYMENT);
+                    }
+                });
+                AlertDialog dialog = alert.create();
+                dialog.show();
+
+            }
+        });
 
     }
 
@@ -105,26 +233,26 @@ public class RoomDetailActivity extends AppCompatActivity {
     }
 
 
-    private void setupAdapter() {
-        mCommentList = new ArrayList<>();
-        recyclerView = findViewById(R.id.recyclerView);
-        manager = new LinearLayoutManager(mContext, RecyclerView.VERTICAL, true);
-
-        recyclerView.setNestedScrollingEnabled(false);
-
-        recyclerView.setLayoutManager(manager);
-
-        adapter = new CommentsRatingRecyclerAdapter(mContext, mCommentList, new CommentsRatingRecyclerAdapter.OnCommentRemoveListener() {
-            @Override
-            public void onCommentRemove(CommentRatingMerge commentUserMerge) {
-                popupForDelete(commentUserMerge);
-            }
-        });
-
-        recyclerView.setAdapter(adapter);
-
-
-    }
+//    private void setupAdapter() {
+//        mCommentList = new ArrayList<>();
+//        recyclerView = findViewById(R.id.recyclerView);
+//        manager = new LinearLayoutManager(mContext, RecyclerView.VERTICAL, true);
+//
+//        recyclerView.setNestedScrollingEnabled(false);
+//
+//        recyclerView.setLayoutManager(manager);
+//
+//        adapter = new CommentsRatingRecyclerAdapter(mContext, mCommentList, new CommentsRatingRecyclerAdapter.OnCommentRemoveListener() {
+//            @Override
+//            public void onCommentRemove(CommentRatingMerge commentUserMerge) {
+//                popupForDelete(commentUserMerge);
+//            }
+//        });
+//
+//        recyclerView.setAdapter(adapter);
+//
+//
+//    }
 
     private void setupWidgets() {
 //        title = findViewById(R.id.title);
@@ -152,44 +280,15 @@ public class RoomDetailActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerView);
 
+        mButton_book=findViewById(R.id.btn_room_book);
 
     }
 
-    private void popupForDelete(final CommentRatingMerge commentUserMerge) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext, R.style.AlertDialog);
-        builder.setTitle("Delete comment  " + commentUserMerge.getComment_desc() + " ?");
-        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
 
-
-                mFirebaseHelper.getMyRef().child(FilePaths.USER_COMMENTS)
-                        .child(post.getId())
-                        .child(commentUserMerge.getComment_id())
-                        .removeValue(new DatabaseReference.CompletionListener() {
-                            @Override
-                            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                mCommentList.remove(commentUserMerge);
-                                adapter.notifyDataSetChanged();
-                                Toast.makeText(mContext, "Deleted artSales: " + post.getName(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                dialog.cancel();
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        builder.show();
-    }
 
     private void popupForDeleteItem() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(mContext, R.style.AlertDialog);
-        builder.setTitle("Delete art item: " + post.getName() + " ?");
+        builder.setTitle("Delete room item: " + post.getName() + " ?");
         builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(final DialogInterface dialog, int which) {
@@ -253,6 +352,11 @@ public class RoomDetailActivity extends AppCompatActivity {
             menu.findItem(R.id.edit_post_action).setVisible(false);
             menu.findItem(R.id.delete_post_action).setVisible(false);
         }
+        SharedPreferenceHelper sharedPreferenceHelper = new SharedPreferenceHelper(getApplicationContext());
+
+        if (sharedPreferenceHelper.getUserType() == 0) {
+            menu.findItem(R.id.delete_post_action).setVisible(false);
+        }
 
         return super.onPrepareOptionsMenu(menu);
     }
@@ -311,7 +415,7 @@ public class RoomDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String uri = String.format(Locale.ENGLISH, "google.navigation:q=%.8f,%.8f",
-                        Double.parseDouble(post.getLattitude()), Double.parseDouble(post.getLongitutde()));
+                        Double.parseDouble(String.valueOf(post.getLattitude())), Double.parseDouble(String.valueOf(post.getLongitutde())));
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                 mContext.startActivity(intent);
             }
@@ -411,10 +515,14 @@ public class RoomDetailActivity extends AppCompatActivity {
 
 
     }
+    //payments module
 
 
     public interface CommentRatingListener {
         void onLoaded(List<CommentRatingMerge> mCommentList);
+    }
+    public interface ReviewRatingListener {
+        void onLoaded(List<ReviewRatingMerge> mCommentList);
     }
 
     public interface CheckRatingExistListener {

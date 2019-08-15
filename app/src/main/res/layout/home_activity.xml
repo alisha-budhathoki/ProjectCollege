@@ -45,6 +45,16 @@
         android:textSize="20dp" />
 
     <ImageButton
+        android:id="@+id/admin_reports"
+        android:layout_width="108dp"
+        android:layout_height="69dp"
+        android:layout_marginLeft="124dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@+id/room_rental_text"
+        android:background="@color/colorloginbackground"
+        app:srcCompat="@drawable/ic_action_man" />
+
+    <ImageButton
         android:id="@+id/user_detail"
         android:layout_width="108dp"
         android:layout_height="69dp"

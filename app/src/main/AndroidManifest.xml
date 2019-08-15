@@ -18,7 +18,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:label">
-        <activity android:name=".search.SearchActivity"></activity>
+        <activity android:name=".admin.ComplaintsActivity"></activity>
+        <activity android:name=".recommendations.RecommendationActivity" />
+        <activity android:name=".search.SearchActivity" />
         <activity android:name=".notifications.NotificationActivity" />
         <activity android:name=".startup.SplashActivity">
             <intent-filter>

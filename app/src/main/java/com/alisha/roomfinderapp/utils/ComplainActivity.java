@@ -70,28 +70,28 @@ public class ComplainActivity extends AppCompatActivity {
 
                 if (TextDataUtils.isEmpty(complaintDesc)) {
                     Toast.makeText(mContext, "Complaint field cannot be empty", Toast.LENGTH_SHORT).show();
-
                 } else {
 
-                    if (setComplainFrom.equals(mContext.getString(R.string.calling_room_complaint))) {
-                        String keyId = mFirebaseHelper.getMyRef().push().getKey();
+
+                    String keyId = mFirebaseHelper.getMyRef().push().getKey();
                         Complaint complaint = new Complaint(keyId,
                                 post.getId(),
+                                post.getName(),
                                 mFirebaseHelper.getAuth().getCurrentUser().getUid(), sharedPreferenceHelper.getUserInfo().getUsername(),
+                                sharedPreferenceHelper.getUserInfo().getAvatar_img_link(),
                                 complaintDesc
                         );
 
                         mFirebaseHelper.getMyRef().child(FilePaths.USER_COMPLAINTS)
-                                .child(post.getId())
                                 .child(mFirebaseHelper.getAuth().getCurrentUser().getUid())
                                 .setValue(complaint, new DatabaseReference.CompletionListener() {
                                     @Override
                                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                        Toast.makeText(mContext, "Error", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(mContext, "Success", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                     }
-                }
+
 
             }
         });

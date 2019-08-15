@@ -14,7 +14,7 @@ public class User implements Parcelable{
     public User() {
     }
 
-    protected User(Parcel in) {
+    public User(Parcel in) {
         user_id = in.readString();
         username = in.readString();
         avatar_img_link = in.readString();

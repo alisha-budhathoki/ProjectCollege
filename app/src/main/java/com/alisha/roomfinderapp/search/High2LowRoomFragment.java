@@ -2,6 +2,7 @@ package com.alisha.roomfinderapp.search;
 
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -90,7 +91,12 @@ public class High2LowRoomFragment extends Fragment {
         Collections.sort(mList, new Comparator<Room>() {
             @Override
             public int compare(Room u1, Room u2) {
-                return u1.getPrice().compareTo(u2.getPrice());
+                int p1 = Integer.parseInt(u2.getPrice());
+                int p2 = Integer.parseInt(u1.getPrice());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    return Integer.compare(p1,p2);
+                }
+                return u2.getPrice().compareTo(u1.getPrice());
             }
         });
     }

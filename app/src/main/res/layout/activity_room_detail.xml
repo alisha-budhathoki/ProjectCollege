@@ -311,25 +311,77 @@
                 android:layout_height="@dimen/width_small_2dp"
                 android:layout_marginTop="8dp"
                 android:background="@color/light_grey" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginBottom="@dimen/small_intrinsic_padding"
-                android:paddingTop="@dimen/small_intrinsic_padding"
-                android:paddingBottom="@dimen/small_intrinsic_padding"
-                android:text="Ratings and reviews"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
+            <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
-            </androidx.recyclerview.widget.RecyclerView>
+                <RelativeLayout
+                    android:id="@+id/relLayoutParent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+
+                    <!-- top toolbar -->
+                    <RelativeLayout
+                        android:id="@+id/relLayout1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_alignParentTop="true">
+
+                            <com.google.android.material.appbar.AppBarLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <com.google.android.material.tabs.TabLayout
+                                    android:id="@+id/htab_tabs"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@color/colorPrimary"
+
+                                    app:tabSelectedTextColor="@color/white"
+                                    app:tabTextColor="@color/white">
+
+
+                                </com.google.android.material.tabs.TabLayout>
+
+                            </com.google.android.material.appbar.AppBarLayout>
+
+                        </RelativeLayout>
+
+                    </RelativeLayout>
+
+                    <!-- Middle section (body) -->
+                    <RelativeLayout
+                        android:id="@+id/relLayout2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/relLayout1">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <androidx.viewpager.widget.ViewPager
+                                android:id="@+id/htab_viewpager"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+                            </androidx.viewpager.widget.ViewPager>
+
+                        </RelativeLayout>
+
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
         </LinearLayout>
 

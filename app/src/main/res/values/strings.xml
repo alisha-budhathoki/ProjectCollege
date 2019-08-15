@@ -77,4 +77,6 @@
     <string name="calling_notification">calling_notification</string>
     <string name="notification_details">notification</string>
     <string name="sample_services">Attached Bathroom?: Y/N   No.of beds: 0   Double sized bed?: Y//N</string>
+    <string name="sample_services2">Attached Bathroom?: Y   No.of beds: 4   Double sized bed?: Y</string>
+    <string name="data_post_name">post_name</string>
 </resources>

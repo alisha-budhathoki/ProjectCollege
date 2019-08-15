@@ -5,16 +5,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.alisha.roomfinderapp.R;
+import com.alisha.roomfinderapp.models.Room;
+import com.alisha.roomfinderapp.utils.FilePaths;
 import com.alisha.roomfinderapp.utils.FirebaseHelper;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SearchActivity extends AppCompatActivity {
@@ -23,15 +27,70 @@ public class SearchActivity extends AppCompatActivity {
     private FirebaseHelper mFirebaseHelper;
 
     private FragmentManager fragmentManager;
+    private FirebaseHelper firebaseHelper;
 
+    private List<Room> rooms;
+    private boolean isSearchReady = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         setupToolbar();
 
+        firebaseHelper = new FirebaseHelper(getApplicationContext());
+
+
+        rooms= new ArrayList<>();
+        firebaseHelper.getMyRef().child(FilePaths.ROOM).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot ds :
+                        dataSnapshot.getChildren()) {
+                    Room room = ds.getValue(Room.class);
+                    rooms.add(room);
+                }
+                isSearchReady = true;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+//        SearchView searchView = findViewById(R.id.fa_search);
+//
+//        final List<String> searchedLocations = new ArrayList<>();
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                if (isSearchReady){
+//                    searchedLocations.clear();
+//                    for (Room room :
+//                            rooms) {
+//                        if (room.getLocation().contains(newText)) {
+//                            searchedLocations.add(room.getLocation());
+//
+//                            Toast.makeText(SearchActivity.this, "Found", Toast.LENGTH_SHORT).show();
+//                        }
+//                        //you can implement recycler view or list view here to show these results
+//                        //use adapter.notifydatasetchanged()
+//                        }
+//                }
+//                return false;
+//            }
+//        });
 
         fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_frame, new High2LowRoomFragment())
+                .commit();
     }
 
 

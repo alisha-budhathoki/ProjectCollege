@@ -1,23 +1,17 @@
-package com.alisha.roomfinderapp.rooms.hotel;
-
+package com.alisha.roomfinderapp.admin;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.alisha.roomfinderapp.R;
-import com.alisha.roomfinderapp.models.Room;
-import com.alisha.roomfinderapp.rooms.RoomRecyclerAdapter;
+import com.alisha.roomfinderapp.models.Complaint;
 import com.alisha.roomfinderapp.utils.FilePaths;
 import com.alisha.roomfinderapp.utils.FirebaseHelper;
 import com.google.firebase.database.DataSnapshot;
@@ -27,39 +21,31 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class HotelFragment extends Fragment {
-
+public class ComplaintsActivity extends AppCompatActivity {
     private Context mContext;
-    private View view;
 
-    private List<Room> mList;
+
+    private List<Complaint> mList;
     private RecyclerView recyclerView;
     private LinearLayoutManager manager;
-    private RoomRecyclerAdapter adapter;
+    private ComplaintsRecyclerAdapter adapter;
     private FirebaseHelper mFirebaseHelper;
     private SwipeRefreshLayout refresh;
 
-
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_rooms, container, false);
-        mContext = getContext();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_complaint_detail);
 
-        mFirebaseHelper = new FirebaseHelper(mContext);
-
-        setupAdapter();
-        loadHousesData();
-
-
-        return view;
+        mContext = getApplicationContext();
+        loadComplaintsData();
     }
 
-    private void loadHousesData() {
+
+    private void loadComplaintsData() {
         refresh.setRefreshing(true);
 
-        mFirebaseHelper.getMyRef().child(FilePaths.ROOM)
+        mFirebaseHelper.getMyRef().child(FilePaths.USER_COMPLAINTS)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -67,8 +53,7 @@ public class HotelFragment extends Fragment {
                         for (DataSnapshot ds :
                                 dataSnapshot.getChildren()) {
 
-                            Room post= ds.getValue(Room.class);
-
+                            Complaint post= ds.getValue(Complaint.class);
                             mList.add(post);
                         }
                         adapter.notifyDataSetChanged();
@@ -86,24 +71,23 @@ public class HotelFragment extends Fragment {
     private void setupAdapter() {
 
         mList = new ArrayList<>();
-        recyclerView = view.findViewById(R.id.recyclerView);
-        refresh = view.findViewById(R.id.refresh);
+        recyclerView = findViewById(R.id.recyclerView);
+        refresh = findViewById(R.id.refresh);
 
         manager = new LinearLayoutManager(mContext, RecyclerView.VERTICAL, false);
 
         recyclerView.setLayoutManager(manager);
 
-        adapter = new RoomRecyclerAdapter(mContext, mList);
+        adapter = new ComplaintsRecyclerAdapter(mContext, mList);
 
         recyclerView.setAdapter(adapter);
 
         refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadHousesData();
+                loadComplaintsData();
             }
         });
     }
-
 
 }

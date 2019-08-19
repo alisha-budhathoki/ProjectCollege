@@ -18,6 +18,9 @@ public class Complaint implements Parcelable {
     public String description;
     public String date_created;
 
+    public Complaint() {
+    }
+
     protected Complaint(Parcel in) {
         id = in.readString();
         post_id = in.readString();

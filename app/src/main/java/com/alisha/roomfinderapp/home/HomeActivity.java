@@ -1,6 +1,7 @@
 package com.alisha.roomfinderapp.home;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -16,9 +17,11 @@ import com.alisha.roomfinderapp.R;
 import com.alisha.roomfinderapp.admin.ComplaintsActivity;
 import com.alisha.roomfinderapp.models.UserFCM;
 import com.alisha.roomfinderapp.notifications.NotificationFragment;
+import com.alisha.roomfinderapp.profile.ProfileFragment;
 import com.alisha.roomfinderapp.rooms.RoomAddActivity;
 import com.alisha.roomfinderapp.rooms.normal.RoomFragment;
 import com.alisha.roomfinderapp.search.SearchActivity;
+import com.alisha.roomfinderapp.settings.Setting;
 import com.alisha.roomfinderapp.utils.FilePaths;
 import com.alisha.roomfinderapp.utils.FirebaseHelper;
 import com.alisha.roomfinderapp.utils.SharedPreferenceHelper;
@@ -30,8 +33,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements ProfileFragment.OnFragmentInteractionListener {
     private static final String TAG = "HomeActivity";
     private ImageButton mimageButton;
     //ImageButton imageButton;
@@ -44,8 +48,8 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
         bottomNav = findViewById(R.id.nav_view);
-        ImageButton imageButton = findViewById(R.id.user_detail);
-
+        ImageButton imageButton = findViewById(R.id.settings);
+        FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.roomNotifications));
         final FirebaseHelper firebaseHelper = new FirebaseHelper(getApplicationContext());
         SharedPreferenceHelper sharedPreferenceHelper= new SharedPreferenceHelper(getApplicationContext());
 
@@ -68,11 +72,10 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                firebaseHelper.signOut();
-
-//                startActivity(new Intent(getApplicationContext(), Userprofile.class));
+                startActivity(new Intent(getApplicationContext(), Setting.class));
             }
         });
+
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new RoomFragment()).commit();
 
@@ -136,7 +139,9 @@ public class HomeActivity extends AppCompatActivity {
                             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
                             break;
                         case R.id.nav_setting:
-                            selectedFragment = new MoreFragment();
+                            selectedFragment = new ProfileFragment();
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+
                             break;
                     }
 
@@ -148,4 +153,8 @@ public class HomeActivity extends AppCompatActivity {
         moveTaskToBack(true);
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 }

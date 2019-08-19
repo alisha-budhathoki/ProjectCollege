@@ -42,7 +42,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-
 import java.util.Random;
 
 
@@ -108,7 +107,65 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             if (!FirebaseAuth.getInstance().getCurrentUser().getUid().equals(user_id)) {
                 sendMessageNotification(notificationTitle, notificationBody, post_id, user_id, date_created, "123");
             }
+        }else if(dataType.equals("room_message")){
+            post_id = remoteMessage.getData().get(getString(R.string.data_post_id));
+            date_created = remoteMessage.getData().get(getString(R.string.data_date_created));
+            notificationTitle = remoteMessage.getData().get(getString(R.string.data_title));
+            notificationBody = remoteMessage.getData().get(getString(R.string.data_body));
+            if (!FirebaseAuth.getInstance().getCurrentUser().getUid().equals(user_id)) {
+                sendRoomNotification(notificationTitle, notificationBody, post_id, date_created, "123");
+            }
         }
+    }
+
+    private void sendRoomNotification(String notificationTitle, String notificationBody, String post_id, String date_created, String s) {
+        //You should use an actual ID instead
+        int notificationId = new Random().nextInt(60000);
+
+
+
+        Intent likeIntent = new Intent(this, HomeActivity.class);
+
+        likeIntent.putExtra(getString(R.string.data_post_id),post_id);
+        final PendingIntent likePendingIntent = PendingIntent.getActivity(this,
+                notificationId+1,likeIntent,PendingIntent.FLAG_ONE_SHOT);
+
+
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+        notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            setupChannels();
+        }
+
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this, ADMIN_CHANNEL_ID)
+//                        .setLargeIcon(bitmap)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+//                        .setContentTitle(remoteMessage.getData().get("title"))
+//                        .setStyle(new NotificationCompat.BigPictureStyle()
+//                                .setSummaryText(remoteMessage.getData().get("message"))
+//                                .bigPicture(bitmap))/*Notification with Image*/
+//                        .setContentText(remoteMessage.getData().get("message"))
+                        .setAutoCancel(true)
+                        .setPriority(Notification.PRIORITY_HIGH)
+                        .setSound(defaultSoundUri)
+                        .addAction(R.drawable.ic_home,
+                                getString(R.string.notification_details),likePendingIntent)
+                        .setContentIntent(likePendingIntent);
+
+        notificationBuilder.setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                .setContentTitle(notificationTitle)
+                .setContentText(notificationBody)
+                .setContentInfo("Info");
+
+        notificationManager.notify(notificationId, notificationBuilder.build());
+
     }
 
 

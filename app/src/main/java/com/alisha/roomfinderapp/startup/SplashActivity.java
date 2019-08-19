@@ -28,7 +28,7 @@ public class SplashActivity extends AppCompatActivity {
         sharedPreferenceHelper = SharedPreferenceHelper.getInstance(mContext);
         loadScreen();
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        FirebaseMessaging.getInstance().subscribeToTopic("pushNotifications");
+        FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.roomNotifications));
         initImageLoader();
     }
 
@@ -45,7 +45,7 @@ public class SplashActivity extends AppCompatActivity {
 
                 if (!sharedPreferenceHelper.getIsFirstLaunch()) {
                     sharedPreferenceHelper.setIsfirstlaunch(false);
-                    Intent in = new Intent(mContext, WelcomeActivityV2.class);
+                    Intent in = new Intent(mContext, LoginActivity.class);
                     in.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(in);
                 } else {

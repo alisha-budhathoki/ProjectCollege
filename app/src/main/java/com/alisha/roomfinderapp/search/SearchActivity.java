@@ -144,6 +144,11 @@ public class SearchActivity extends AppCompatActivity {
                         .replace(R.id.main_frame, new LocationRoomFragment())
                         .commit();
                 return true;
+            case R.id.action_popular:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.main_frame, new PopularRoomFragment())
+                        .commit();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

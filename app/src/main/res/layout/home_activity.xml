@@ -46,22 +46,21 @@
 
 
     <ImageButton
-        android:id="@+id/user_detail"
-        android:layout_width="wrap_content"
+        android:id="@+id/settings"
+        android:layout_width="108dp"
         android:layout_height="69dp"
-        android:layout_alignParentEnd="true"
-        android:padding="12dp"
+        android:layout_marginLeft="124dp"
         android:layout_marginTop="5dp"
+        android:layout_toRightOf="@+id/room_rental_text"
         android:background="@color/colorloginbackground"
-        app:srcCompat="@drawable/ic_action_man" />
-
+        app:srcCompat="@drawable/ic_more" />
     <ImageButton
         android:id="@+id/admin_reports"
         android:layout_width="wrap_content"
         android:visibility="invisible"
         android:layout_height="69dp"
         android:layout_marginTop="5dp"
-        android:layout_toLeftOf="@+id/user_detail"
+        android:layout_toLeftOf="@+id/settings"
         android:background="@color/colorloginbackground"
         android:padding="12dp"
         app:srcCompat="@drawable/ic_report_white" />

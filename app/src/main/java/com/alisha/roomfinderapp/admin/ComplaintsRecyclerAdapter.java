@@ -1,7 +1,6 @@
 package com.alisha.roomfinderapp.admin;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alisha.roomfinderapp.R;
 import com.alisha.roomfinderapp.models.Complaint;
-import com.alisha.roomfinderapp.rooms.normal.RoomDetailActivity;
 import com.alisha.roomfinderapp.utils.UniversalImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -73,11 +71,12 @@ public class ComplaintsRecyclerAdapter extends RecyclerView.Adapter<ComplaintsRe
                 public void onClick(View view) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
-                        Intent intent = new Intent(mContext, RoomDetailActivity.class);
-                        intent.putExtra(mContext.getString(R.string.calling_room_detail),
-                                mList.get(getAdapterPosition()));
-
-                        mContext.startActivity(intent);
+//                        Intent intent = new Intent(mContext, RoomDetailActivity.class);
+//                        intent.putExtra(mContext.getString(R.string.data_post_id),
+//                                mList.get(getAdapterPosition()).getPost_id());
+//
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        mContext.startActivity(intent);
                     }
                 }
             });

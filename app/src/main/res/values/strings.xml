@@ -25,13 +25,16 @@
     <string name="calling_category">calling category</string>
     <string name="calling_room_detail">Calling Room</string>
     <string name="calling_others_detail">calling others</string>
-    <string name="app_name_main">Room Finder</string>
+    <string name="app_name_main">Room Rental</string>
     <string name="add_complain">Report</string>
     <string name="dialog_edit">Edit</string>
     <string name="dialog_delete">Delete</string>
     <string name="send">Send</string>
     <string name="calling_room_complaint">room_complaint</string>
     <string name="calling_room_edit">room_edit_intent</string>
+    <string name="emailid">Email</string>
+    <string name="username">Username</string>
+
 
     <string-array name="choice_arrays">
         <item>per month</item>
@@ -79,4 +82,5 @@
     <string name="sample_services">Attached Bathroom?: Y/N   No.of beds: 0   Double sized bed?: Y//N</string>
     <string name="sample_services2">Attached Bathroom?: Y   No.of beds: 4   Double sized bed?: Y</string>
     <string name="data_post_name">post_name</string>
+    <string name="roomNotifications">pushNotifications</string>
 </resources>

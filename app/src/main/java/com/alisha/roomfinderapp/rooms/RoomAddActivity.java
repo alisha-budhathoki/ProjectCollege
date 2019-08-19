@@ -29,6 +29,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import com.alisha.roomfinderapp.R;
+import com.alisha.roomfinderapp.models.Notification;
 import com.alisha.roomfinderapp.models.Room;
 import com.alisha.roomfinderapp.utils.FilePaths;
 import com.alisha.roomfinderapp.utils.FirebaseHelper;
@@ -398,9 +399,8 @@ public class RoomAddActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        hideProgressDialog();
-                        finish();
-                    }
+                        sendNotificationToUsersRoom();
+                          }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
@@ -681,4 +681,41 @@ public class RoomAddActivity extends AppCompatActivity {
         super.onDestroy();
 
     }
+    private void sendNotificationToUsersRoom() {
+        Notification notification = new Notification();
+
+        SharedPreferenceHelper sharedPreferenceHelper = new SharedPreferenceHelper(getApplicationContext());
+        notification.setKeyId(post.getId());
+        notification.setMessage(String.format("%s added a new room: %s", sharedPreferenceHelper.getUserInfo().getUsername(),
+                post.getName()));
+        notification.setUserId(post.getOwner_id());
+        notification.setSenderId(mFirebaseHelper.getAuth().getCurrentUser().getUid());
+        notification.setDate_added(DateTimeUtils.formatDate(new Date()));
+        //insert to notification table only if other users send comment
+        if (!mFirebaseHelper.getAuth().getCurrentUser().getUid().equals(post.getOwner_id())){
+            String keyId = mFirebaseHelper.getMyRef().child(FilePaths.NOTIFICATIONS)
+                    .child(post.getOwner_id()).push().getKey();
+            mFirebaseHelper.getMyRef().child(FilePaths.NOTIFICATIONS)
+                    .child(post.getOwner_id())
+                    .child(post.getId())
+                    .child(keyId)
+                    .setValue(notification).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    hideProgressDialog();
+                    finish();
+                    Toast.makeText(mContext, "Message sent to owner", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    hideProgressDialog();
+                    finish();
+                }
+            });
+        }
+
+
+    }
 }
+

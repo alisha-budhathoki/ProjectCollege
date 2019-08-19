@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/text7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textSize="20dp"
+            android:text="This application that helps the house owner to keep record of their properties and the tenants renting the property.
+
+"  android:textColor="@color/black"/>
+    <TextView
+        android:id="@+id/text8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text=" This application has been developed using android studio as IDE, java as main programming language, xml as defining layout, android built in layout editor to design layout and backend part using the firebase.
+"
+        android:textColor="@color/black"
+        android:layout_below="@+id/text7"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textSize="20dp"
+        android:text="This application has been developed using android studio as IDE, java as main programming language, xml as defining layout, android built in layout editor to design layout and backend part using the firebase.
+"
+        android:textColor="@color/black"
+        android:layout_below="@+id/text8"/>
+
+
+</RelativeLayout>

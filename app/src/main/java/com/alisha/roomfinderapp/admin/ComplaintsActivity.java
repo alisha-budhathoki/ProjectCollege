@@ -38,6 +38,9 @@ public class ComplaintsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_complaint_detail);
 
         mContext = getApplicationContext();
+
+        mFirebaseHelper = new FirebaseHelper(getApplicationContext());
+        setupAdapter();
         loadComplaintsData();
     }
 

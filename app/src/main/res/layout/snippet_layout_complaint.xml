@@ -24,6 +24,7 @@
 
         <View
             android:id="@+id/div"
+            android:layout_toRightOf="@id/user_image"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@+id/username"
@@ -37,6 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/div"
             android:layout_marginLeft="@dimen/mar_4"
+            android:layout_toRightOf="@id/user_image"
             android:ellipsize="end"
             android:maxLines="2"
             android:padding="@dimen/pad_8"

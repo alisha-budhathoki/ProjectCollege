@@ -43,8 +43,10 @@ import com.github.thunder413.datetimeutils.DateTimeUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.hsalf.smilerating.SmileRating;
 
 import java.util.Date;
@@ -370,7 +372,7 @@ public class RoomDetailActivity extends AppCompatActivity {
         SharedPreferenceHelper sharedPreferenceHelper = new SharedPreferenceHelper(getApplicationContext());
 
         if (sharedPreferenceHelper.getUserType() == 0) {
-            menu.findItem(R.id.delete_post_action).setVisible(false);
+            menu.findItem(R.id.delete_post_action).setVisible(true);
         }
 
         return super.onPrepareOptionsMenu(menu);
@@ -405,39 +407,97 @@ public class RoomDetailActivity extends AppCompatActivity {
         in = getIntent();
 
         //for edit calls from another activity
-        post = in.getParcelableExtra(mContext.getString(R.string.calling_room_detail));
-        UniversalImageLoader.setImage(post.getImage(), house_pic, null, "");
-        roomName.setText(post.getName());
-        location.setText(post.getLocation());
-        description.setText(post.getDesc());
-        no_of_rooms.setText(post.getNo_of_rooms() + "");
-        location.setText(post.getLocation());
-        price.setText(post.getPrice() + "");
-        contact_no.setText(post.getContact_no() + "");
-        owner_name.setText(post.getOwner_name());
+        if (in.hasExtra(mContext.getString(R.string.calling_room_detail))) {
+            post = in.getParcelableExtra(mContext.getString(R.string.calling_room_detail));
+            UniversalImageLoader.setImage(post.getImage(), house_pic, null, "");
+            roomName.setText(post.getName());
+            location.setText(post.getLocation());
+            description.setText(post.getDesc());
+            no_of_rooms.setText(post.getNo_of_rooms() + "");
+            location.setText(post.getLocation());
+            price.setText(post.getPrice() + "");
+            contact_no.setText(post.getContact_no() + "");
+            owner_name.setText(post.getOwner_name());
 
-        call_now.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            call_now.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-                Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:" + post.getContact_no()));
-                startActivity(intent);
-            }
-        });
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse("tel:" + post.getContact_no()));
+                    startActivity(intent);
+                }
+            });
 
-        lin_directions.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String uri = String.format(Locale.ENGLISH, "google.navigation:q=%.8f,%.8f",
-                        Double.parseDouble(String.valueOf(post.getLattitude())), Double.parseDouble(String.valueOf(post.getLongitutde())));
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                mContext.startActivity(intent);
-            }
-        });
+            lin_directions.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String uri = String.format(Locale.ENGLISH, "google.navigation:q=%.8f,%.8f",
+                            Double.parseDouble(String.valueOf(post.getLattitude())), Double.parseDouble(String.valueOf(post.getLongitutde())));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                    mContext.startActivity(intent);
+                }
+            });
+            //increase view count by 1
+            mFirebaseHelper.getMyRef().child(FilePaths.ROOM).child(post.getId()).child("viewCount").setValue(post.getViewCount()+1);
 
-        //increase view count by 1
-        mFirebaseHelper.getMyRef().child(FilePaths.ROOM).child(post.getId()).child("viewCount").setValue(post.getViewCount()+1);
+        }
+
+        if (in.hasExtra(getString(R.string.data_post_id))) {
+            mFirebaseHelper.getMyRef().child(FilePaths.ROOM).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot ds :
+                            dataSnapshot.getChildren()) {
+                        Room room = ds.getValue(Room.class);
+                        if (room.getId().equals(in.getStringExtra(getString(R.string.data_post_id)))) {
+                            post = room;
+                        }
+                    }
+                    mFirebaseHelper.getMyRef().child(FilePaths.ROOM).child(post.getId()).child("viewCount").setValue(post.getViewCount()+1);
+                    UniversalImageLoader.setImage(post.getImage(), house_pic, null, "");
+                    roomName.setText(post.getName());
+                    location.setText(post.getLocation());
+                    description.setText(post.getDesc());
+                    no_of_rooms.setText(post.getNo_of_rooms() + "");
+                    location.setText(post.getLocation());
+                    price.setText(post.getPrice() + "");
+                    contact_no.setText(post.getContact_no() + "");
+                    owner_name.setText(post.getOwner_name());
+
+                    call_now.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            Intent intent = new Intent(Intent.ACTION_DIAL);
+                            intent.setData(Uri.parse("tel:" + post.getContact_no()));
+                            startActivity(intent);
+                        }
+                    });
+
+                    lin_directions.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            String uri = String.format(Locale.ENGLISH, "google.navigation:q=%.8f,%.8f",
+                                    Double.parseDouble(String.valueOf(post.getLattitude())), Double.parseDouble(String.valueOf(post.getLongitutde())));
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                            mContext.startActivity(intent);
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+            //increase view count by 1
+
+
+        }
+
+
+
 
 
 

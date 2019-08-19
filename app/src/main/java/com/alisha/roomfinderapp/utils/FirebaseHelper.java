@@ -24,10 +24,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -134,62 +131,62 @@ public class FirebaseHelper {
         return user_id;
     }
 
-    public void registerNewEmail(final String email, String password, final String username,
-                                 final String avatar_img, final String contact) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(mContext, task.getException().toString(),
-                                    Toast.LENGTH_SHORT).show();
-                            ((RegisterActivity) mContext).hideProgressBar();
-
-                        } else if (task.isSuccessful()) {
-
-                            Toast.makeText(mContext, "Sucessfully registered user. Welcome " + username, Toast.LENGTH_SHORT).show();
-                            ((RegisterActivity) mContext).finish();
-                            mContext.startActivity(new Intent(mContext, HomeActivity.class));
-                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                    .setDisplayName(username)
-                                    .build();
-                            FirebaseUser current_user = mAuth.getCurrentUser();
-                            assert current_user != null;
-                            current_user.updateProfile(profileUpdates)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                Log.d(TAG, "User profile updated.");
-
-                                            }
-                                        }
-                                    });
-
-                            User user = new User(mAuth.getCurrentUser().getUid(),
-                                    username,
-                                    avatar_img,
-                                    UserTypes.NORMAL,
-                                    email,
-                                    contact
-                            );
-                            SharedPreferenceHelper sharedPreferenceHelper = new SharedPreferenceHelper(mContext);
-
-                            sharedPreferenceHelper.saveUserInfo(user);
-
-                            addUserDetails(sharedPreferenceHelper.getUserInfo());
-                            ((RegisterActivity) mContext).hideProgressBar();
-
-                        }
-
-                    }
-                });
-    }
+//    public void registerNewEmail(final String email, String password, final String username,
+//                                 final String avatar_img, final String contact) {
+//        mAuth.createUserWithEmailAndPassword(email, password)
+//                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+//
+//                        // If sign in fails, display a message to the user. If sign in succeeds
+//                        // the auth state listener will be notified and logic to handle the
+//                        // signed in user can be handled in the listener.
+//                        if (!task.isSuccessful()) {
+//                            Toast.makeText(mContext, task.getException().toString(),
+//                                    Toast.LENGTH_SHORT).show();
+//                            ((RegisterActivity) mContext).hideProgressBar();
+//
+//                        } else if (task.isSuccessful()) {
+//
+//                            Toast.makeText(mContext, "Sucessfully registered user. Welcome " + username, Toast.LENGTH_SHORT).show();
+//                            ((RegisterActivity) mContext).finish();
+//                            mContext.startActivity(new Intent(mContext, HomeActivity.class));
+//                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+//                                    .setDisplayName(username)
+//                                    .build();
+//                            FirebaseUser current_user = mAuth.getCurrentUser();
+//                            assert current_user != null;
+//                            current_user.updateProfile(profileUpdates)
+//                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                        @Override
+//                                        public void onComplete(@NonNull Task<Void> task) {
+//                                            if (task.isSuccessful()) {
+//                                                Log.d(TAG, "User profile updated.");
+//
+//                                            }
+//                                        }
+//                                    });
+//
+//                            User user = new User(mAuth.getCurrentUser().getUid(),
+//                                    username,
+//                                    avatar_img,
+//                                    UserTypes.NORMAL,
+//                                    email,
+//                                    contact
+//                            );
+//                            SharedPreferenceHelper sharedPreferenceHelper = new SharedPreferenceHelper(mContext);
+//
+//                            sharedPreferenceHelper.saveUserInfo(user);
+//
+//                            addUserDetails(sharedPreferenceHelper.getUserInfo());
+//                            ((RegisterActivity) mContext).hideProgressBar();
+//
+//                        }
+//
+//                    }
+//                });
+//    }
 
     private void addUserDetails(User user) {
         myRef.child("users")

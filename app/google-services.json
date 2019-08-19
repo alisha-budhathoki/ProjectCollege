@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "141077307539-kv1eq8e8cp182bs9o0geuq47ol2qi8ui.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alisha.roomfinderapp",
+            "certificate_hash": "3d625c7d7e35035dd2394d7f58aefc019759e59c"
+          }
+        },
+        {
           "client_id": "141077307539-30pa569o865n7te9gmj5frk3savm0upl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

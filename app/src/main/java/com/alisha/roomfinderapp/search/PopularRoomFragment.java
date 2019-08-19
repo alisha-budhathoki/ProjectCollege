@@ -2,6 +2,7 @@ package com.alisha.roomfinderapp.search;
 
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -71,6 +74,7 @@ public class PopularRoomFragment extends Fragment {
 
                             mList.add(post);
                         }
+                        filter4Popular();
                         adapter.notifyDataSetChanged();
                         refresh.setRefreshing(false);
                     }
@@ -81,6 +85,27 @@ public class PopularRoomFragment extends Fragment {
                         refresh.setRefreshing(false);
                     }
                 });
+    }
+    private void filter4Popular() {
+        Collections.sort(mList, new Comparator<Room>() {
+            @Override
+            public int compare(Room u1, Room u2) {
+                int p1 = Integer.parseInt(u1.getPrice());
+                int p2 = Integer.parseInt(u2.getPrice());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    return Integer.compare(p1,p2);
+                }
+                return u1.getPrice().compareTo(u2.getPrice());
+            }
+        });
+        List<Room> tempList = new ArrayList<>();
+
+
+        for(int i = 0; i < 5; i++) {
+            tempList.add(mList.get(i));
+        }
+        mList.clear();
+        mList.addAll(tempList);
     }
 
     private void setupAdapter() {

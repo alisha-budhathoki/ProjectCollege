@@ -18,7 +18,8 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:label">
-        <activity android:name=".admin.ComplaintsActivity"></activity>
+        <activity android:name=".settings.aboutActivity"></activity>
+        <activity android:name=".admin.ComplaintsActivity" />
         <activity android:name=".recommendations.RecommendationActivity" />
         <activity android:name=".search.SearchActivity" />
         <activity android:name=".notifications.NotificationActivity" />
@@ -36,9 +37,8 @@
         <activity android:name=".startup.RegisterActivity" />
         <activity android:name=".startup.WelcomeActivityV2" />
         <activity android:name=".utils.ComplainActivity" />
-        <activity android:name=".utils.SettingActivity" />
-
-
+        <activity android:name=".profile.EditProfile" />
+        <activity android:name=".settings.Setting" />
 
         <!--
      Set custom default icon. This is used when no icon is set for incoming notification messages.
